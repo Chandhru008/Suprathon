@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Sign Up - Automated HR Management</title>
+    <link rel="stylesheet" href="login.css">
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-image">
+            <img src="https://images.unsplash.com/photo-1515168833906-d2a3b82b1a48?auto=format&fit=crop&w=400&q=80" alt="Employee Sign Up" />
+        </div>
+        <div class="login-form-section">
+            <h1>Employee Sign Up</h1>
+            <p class="subtitle">Create your employee account</p>
+            <form id="signupForm" action="http://localhost:5502/signup.html" method="post">
+                <label for="name" style="font-weight: bold;">Employee Name</label>
+                <div class="input-icon">
+                    <span class="icon-user"></span>
+                    <input type="text" id="name" name="name" placeholder="Enter your name" required>
+                </div>
+                <label for="email">Employee Email</label>
+                <input type="email" id="email" name="username" placeholder="Enter your employee email" required>
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" placeholder="Create a password" required>
+                <button type="submit">Sign Up</button>
+            </form>
+            <div class="details">
+                <p class="small">Already have an account? <a href="login.html">Login</a></p>
+            </div>
+        </div>
+    </div>
+    <script src="signup.js"></script>
+    <style>
+.input-icon {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+.input-icon .icon-user {
+    position: absolute;
+    left: 12px;
+    font-size: 1.1em;
+    color: #2a6eea;
+    pointer-events: none;
+}
+.input-icon input {
+    padding-left: 36px !important;
+}
+</style>
+<!-- User icon using Unicode -->
+<script>
+document.querySelectorAll('.icon-user').forEach(function(el) {
+    el.textContent = '\u{1F464}'; // Unicode for user icon
+});
+</script>
+</body>
+</html> 

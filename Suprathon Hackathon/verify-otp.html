@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enter OTP - Automated HR Management</title>
+    <link rel="stylesheet" href="login.css">
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-image">
+            <img src="https://images.unsplash.com/photo-1515168833906-d2a3b82b1a48?auto=format&fit=crop&w=400&q=80" alt="OTP Entry" />
+        </div>
+        <div class="login-form-section">
+            <h1>Enter OTP</h1>
+            <p class="subtitle">An OTP has been sent to your email. Please enter it below to continue.</p>
+            <form id="otpForm" action="http://localhost:5502/verify-otp.html" method="post">
+                <label for="otp">Enter OTP</label>
+                <input type="text" id="otp" name="otpsend" maxlength="6" pattern="\d{6}" placeholder="6-digit code" required>
+                <button type="submit">Verify</button>
+            </form>
+            <div class="details">
+                <p class="small"><a href="#" id="resendOtp">Resend OTP</a></p>
+                <p class="small"><a href="login.html">Back to Login</a></p>
+            </div>
+        </div>
+    </div>
+    <script src="otp.js"></script>
+</body>
+</html> 

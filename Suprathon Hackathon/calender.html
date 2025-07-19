@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendar UI</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+        body {
+            font-family: 'Inter', Arial, sans-serif;
+            background: #f5f7fa;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        .header-bar {
+            width: 100vw;
+            background: #22314a;
+            color: #fff;
+            padding: 18px 0 16px 0;
+            font-size: 1.25em;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(34,49,74,0.04);
+            margin-bottom: 0;
+        }
+        .calendar-container {
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 12px rgba(44, 62, 80, 0.08);
+            border: 1px solid #e3e7ed;
+            padding: 32px 28px 24px 28px;
+            width: 400px;
+            min-width: 320px;
+            margin: 32px auto 0 auto;
+        }
+        .leave-summary {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+        }
+        .leave-summary-item {
+            background: #f5f7fa;
+            border-radius: 6px;
+            padding: 8px 16px;
+            font-size: 0.98em;
+            color: #22314a;
+            font-weight: 600;
+            border: 1px solid #e3e7ed;
+        }
+        .calendar-title {
+            font-size: 1.18em;
+            font-weight: 600;
+            color: #22314a;
+            margin-bottom: 18px;
+            letter-spacing: 0.5px;
+        }
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 14px;
+        }
+        .calendar-header button {
+            background: #e3e7ed;
+            border: none;
+            border-radius: 6px;
+            width: 32px;
+            height: 32px;
+            font-size: 1.1em;
+            color: #22314a;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.15s, color 0.15s;
+        }
+        .calendar-header button:hover {
+            background: #2563eb;
+            color: #fff;
+        }
+        .calendar-header span {
+            font-weight: 600;
+            font-size: 1.08em;
+            color: #22314a;
+            letter-spacing: 0.5px;
+        }
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 6px;
+        }
+        .calendar-day, .calendar-date {
+            text-align: center;
+            padding: 8px 0;
+        }
+        .calendar-day {
+            font-weight: 600;
+            color: #6b7a90;
+            font-size: 0.98em;
+        }
+        .calendar-date {
+            background: #f5f7fa;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1em;
+            color: #22314a;
+            border: 1px solid transparent;
+            transition: background 0.18s, color 0.18s, border 0.18s;
+            position: relative;
+        }
+        .calendar-date.selected {
+            background: #2563eb;
+            color: #fff;
+            border: 1.5px solid #1746a2;
+            font-weight: 600;
+            z-index: 1;
+        }
+        .calendar-date.leave-marked {
+            background: #eaf1fb;
+            color: #1746a2;
+            border: 1.5px solid #2563eb;
+            font-weight: 600;
+        }
+        .calendar-date:hover {
+            background: #e3e7ed;
+            color: #1746a2;
+            border: 1.5px solid #2563eb;
+        }
+        .calendar-date:active {
+            background: #1746a2;
+            color: #fff;
+        }
+        .leave-section {
+            margin-top: 24px;
+            padding: 16px 0 0 0;
+            border-top: 1px solid #e3e7ed;
+        }
+        .leave-section h2 {
+            font-size: 1.05em;
+            font-weight: 600;
+            color: #22314a;
+            margin: 0 0 8px 0;
+        }
+        .leave-dates-list {
+            font-size: 0.98em;
+            color: #2563eb;
+            min-height: 22px;
+        }
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(34, 49, 74, 0.18);
+            justify-content: center;
+            align-items: center;
+        }
+        .modal.active {
+            display: flex;
+        }
+        .modal-content {
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 16px rgba(44, 62, 80, 0.18);
+            padding: 28px 24px 20px 24px;
+            min-width: 320px;
+            max-width: 90vw;
+        }
+        .modal-content h3 {
+            margin-top: 0;
+            color: #22314a;
+            font-size: 1.08em;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+        .modal-content label {
+            display: block;
+            margin: 12px 0 4px 0;
+            color: #22314a;
+            font-size: 0.98em;
+        }
+        .modal-content select, .modal-content textarea {
+            width: 100%;
+            padding: 7px 8px;
+            border-radius: 5px;
+            border: 1px solid #e3e7ed;
+            font-size: 1em;
+            margin-bottom: 10px;
+            background: #f5f7fa;
+            color: #22314a;
+            resize: none;
+        }
+        .modal-content textarea {
+            min-height: 48px;
+        }
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .modal-actions button {
+            padding: 7px 18px;
+            border-radius: 5px;
+            border: none;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            background: #2563eb;
+            color: #fff;
+            transition: background 0.15s;
+        }
+        .modal-actions button.cancel {
+            background: #e3e7ed;
+            color: #22314a;
+        }
+        .modal-actions button:hover:not(.cancel) {
+            background: #1746a2;
+        }
+        .modal-actions button.cancel:hover {
+            background: #d1d5db;
+        }
+        .modal-success {
+            color: #2563eb;
+            font-size: 0.98em;
+            margin-top: 8px;
+        }
+        .modal-error {
+            color: #e53e3e;
+            font-size: 0.98em;
+            margin-top: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header-bar">Employee Leave Portal</div>
+    <div class="calendar-container">
+        <div class="leave-summary">
+            <div class="leave-summary-item">Leaves Pending: <span id="leavesPending">2</span></div>
+            <div class="leave-summary-item">No. of Leaves Available: <span id="leavesAvailable">10</span></div>
+        </div>
+        <div class="calendar-title">Leave Calendar</div>
+        <div class="calendar-header">
+            <button id="prevMonth" title="Previous Month">&#8592;</button>
+            <span id="monthYear"></span>
+            <button id="nextMonth" title="Next Month">&#8594;</button>
+        </div>
+        <div class="calendar-grid" id="calendarDays">
+            <!-- Days of week will be injected here -->
+        </div>
+        <div class="calendar-grid" id="calendarDates">
+            <!-- Dates will be injected here -->
+        </div>
+        <div class="leave-section">
+            <h2>Selected Leave Date</h2>
+            <div class="leave-dates-list" id="leaveDatesList">None</div>
+        </div>
+    </div>
+    <!-- Modal for leave application -->
+    <div class="modal" id="leaveModal">
+        <div class="modal-content">
+            <h3>Apply for Leave</h3>
+            <form id="leaveForm">
+                <label for="leaveType">Leave Type</label>
+                <select id="leaveType" required>
+                    <option value="">Select Type</option>
+                    <option value="Sick Leave">Sick Leave</option>
+                    <option value="Casual Leave">Casual Leave</option>
+                    <option value="Earned Leave">Earned Leave</option>
+                    <option value="Work From Home">Work From Home</option>
+                </select>
+                <label for="leaveReason">Reason</label>
+                <textarea id="leaveReason" placeholder="Enter reason for leave" required></textarea>
+                <div class="modal-actions">
+                    <button type="button" class="cancel" id="cancelModal">Cancel</button>
+                    <button type="submit">Submit</button>
+                </div>
+                <div class="modal-success" id="modalSuccess" style="display:none;">Leave request submitted!</div>
+                <div class="modal-error" id="modalError" style="display:none;"></div>
+            </form>
+        </div>
+    </div>
+    <script>
+        const monthYear = document.getElementById('monthYear');
+        const calendarDays = document.getElementById('calendarDays');
+        const calendarDates = document.getElementById('calendarDates');
+        const prevMonthBtn = document.getElementById('prevMonth');
+        const nextMonthBtn = document.getElementById('nextMonth');
+        const leaveDatesList = document.getElementById('leaveDatesList');
+        const leaveModal = document.getElementById('leaveModal');
+        const leaveForm = document.getElementById('leaveForm');
+        const leaveType = document.getElementById('leaveType');
+        const leaveReason = document.getElementById('leaveReason');
+        const cancelModal = document.getElementById('cancelModal');
+        const modalSuccess = document.getElementById('modalSuccess');
+        const modalError = document.getElementById('modalError');
+        const leavesPending = document.getElementById('leavesPending');
+        const leavesAvailable = document.getElementById('leavesAvailable');
+
+        const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+        let today = new Date();
+        let currentMonth = today.getMonth();
+        let currentYear = today.getFullYear();
+        let selectedDate = null;
+        let pendingLeaves = 2; // Example initial value
+        let availableLeaves = 10; // Example initial value
+        let leaveDates = [];
+
+        function renderDays() {
+            calendarDays.innerHTML = '';
+            daysOfWeek.forEach(day => {
+                const dayDiv = document.createElement('div');
+                dayDiv.className = 'calendar-day';
+                dayDiv.textContent = day;
+                calendarDays.appendChild(dayDiv);
+            });
+        }
+
+        function renderDates(month, year) {
+            calendarDates.innerHTML = '';
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+            // Fill empty slots before first day
+            for (let i = 0; i < firstDay; i++) {
+                const emptyDiv = document.createElement('div');
+                calendarDates.appendChild(emptyDiv);
+            }
+
+            for (let date = 1; date <= daysInMonth; date++) {
+                const dateDiv = document.createElement('div');
+                dateDiv.className = 'calendar-date';
+                dateDiv.textContent = date;
+                // Highlight leave-marked dates
+                const dateStr = new Date(year, month, date).toISOString().split('T')[0];
+                if (leaveDates.includes(dateStr)) {
+                    dateDiv.classList.add('leave-marked');
+                }
+                if (
+                    selectedDate &&
+                    selectedDate.getDate() === date &&
+                    selectedDate.getMonth() === month &&
+                    selectedDate.getFullYear() === year
+                ) {
+                    dateDiv.classList.add('selected');
+                }
+                dateDiv.addEventListener('click', () => {
+                    selectedDate = new Date(year, month, date);
+                    renderDates(month, year);
+                    updateLeaveSection();
+                    openLeaveModal();
+                });
+                calendarDates.appendChild(dateDiv);
+            }
+        }
+
+        function updateCalendar() {
+            monthYear.textContent = `${today.toLocaleString('default', { month: 'long' })} ${currentYear}`;
+            renderDays();
+            renderDates(currentMonth, currentYear);
+            updateLeaveSection();
+        }
+
+        function updateLeaveSection() {
+            if (selectedDate) {
+                leaveDatesList.textContent = selectedDate.toLocaleDateString();
+            } else {
+                leaveDatesList.textContent = 'None';
+            }
+        }
+
+        function openLeaveModal() {
+            leaveType.value = '';
+            leaveReason.value = '';
+            modalSuccess.style.display = 'none';
+            modalError.style.display = 'none';
+            leaveModal.classList.add('active');
+        }
+
+        function closeLeaveModal() {
+            leaveModal.classList.remove('active');
+        }
+
+        async function fetchLeaveDates() {
+            try {
+                const res = await fetch('http://localhost:5502/api/leaves');
+                const data = await res.json();
+                leaveDates = data.map(l => l.date);
+            } catch {
+                leaveDates = [];
+            }
+        }
+
+        async function updateCalendarWithLeaves() {
+            await fetchLeaveDates();
+            updateCalendar();
+        }
+
+        leaveForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            modalSuccess.style.display = 'none';
+            modalError.style.display = 'none';
+            if (!selectedDate) {
+                modalError.textContent = 'No date selected.';
+                modalError.style.display = 'block';
+                return;
+            }
+            const leaveData = {
+                date: selectedDate.toISOString().split('T')[0],
+                type: leaveType.value,
+                reason: leaveReason.value
+            };
+            // Prevent duplicate leave for the same date
+            if (leaveDates.includes(leaveData.date)) {
+                modalError.textContent = 'Leave already marked for this date.';
+                modalError.style.display = 'block';
+                return;
+            }
+            try {
+                const response = await fetch('http://localhost:5502/api/leaves', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(leaveData)
+                });
+                if (!response.ok) throw new Error('Failed to submit leave');
+                modalSuccess.style.display = 'block';
+                modalError.style.display = 'none';
+                // Update leave counters only if not duplicate
+                pendingLeaves++;
+                availableLeaves = Math.max(0, availableLeaves - 1);
+                leavesPending.textContent = pendingLeaves;
+                leavesAvailable.textContent = availableLeaves;
+                setTimeout(() => {
+                    closeLeaveModal();
+                    updateCalendarWithLeaves();
+                }, 1200);
+            } catch (err) {
+                modalError.textContent = 'Error submitting leave. Please try again.';
+                modalError.style.display = 'block';
+            }
+        });
+
+        cancelModal.addEventListener('click', function() {
+            closeLeaveModal();
+        });
+
+        // Close modal on outside click
+        leaveModal.addEventListener('click', function(e) {
+            if (e.target === leaveModal) closeLeaveModal();
+        });
+
+        prevMonthBtn.addEventListener('click', () => {
+            currentMonth--;
+            if (currentMonth < 0) {
+                currentMonth = 11;
+                currentYear--;
+            }
+            today = new Date(currentYear, currentMonth, 1);
+            updateCalendarWithLeaves();
+        });
+
+        nextMonthBtn.addEventListener('click', () => {
+            currentMonth++;
+            if (currentMonth > 11) {
+                currentMonth = 0;
+                currentYear++;
+            }
+            today = new Date(currentYear, currentMonth, 1);
+            updateCalendarWithLeaves();
+        });
+
+        // Initial load
+        updateCalendarWithLeaves();
+    </script>
+</body>
+</html> 

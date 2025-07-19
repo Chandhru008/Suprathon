@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HR Dashboard - Leave Management</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+        body {
+            font-family: 'Inter', Arial, sans-serif;
+            background: #f5f7fa;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        .header-bar {
+            width: 100vw;
+            background: #22314a;
+            color: #fff;
+            padding: 18px 0 16px 0;
+            font-size: 1.25em;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(34,49,74,0.04);
+            margin-bottom: 0;
+        }
+        .dashboard-container {
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 12px rgba(44, 62, 80, 0.08);
+            border: 1px solid #e3e7ed;
+            padding: 32px 28px 24px 28px;
+            width: 440px;
+            min-width: 320px;
+            margin: 32px auto 0 auto;
+        }
+        .dashboard-title {
+            font-size: 1.18em;
+            font-weight: 600;
+            color: #22314a;
+            margin-bottom: 18px;
+            letter-spacing: 0.5px;
+        }
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 14px;
+        }
+        .calendar-header button {
+            background: #e3e7ed;
+            border: none;
+            border-radius: 6px;
+            width: 32px;
+            height: 32px;
+            font-size: 1.1em;
+            color: #22314a;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.15s, color 0.15s;
+        }
+        .calendar-header button:hover {
+            background: #2563eb;
+            color: #fff;
+        }
+        .calendar-header span {
+            font-weight: 600;
+            font-size: 1.08em;
+            color: #22314a;
+            letter-spacing: 0.5px;
+        }
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 6px;
+        }
+        .calendar-day, .calendar-date {
+            text-align: center;
+            padding: 8px 0;
+        }
+        .calendar-day {
+            font-weight: 600;
+            color: #6b7a90;
+            font-size: 0.98em;
+        }
+        .calendar-date {
+            background: #f5f7fa;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1em;
+            color: #22314a;
+            border: 1px solid transparent;
+            transition: background 0.18s, color 0.18s, border 0.18s;
+            position: relative;
+        }
+        .calendar-date.leave-marked {
+            background: #eaf1fb;
+            color: #1746a2;
+            border: 1.5px solid #2563eb;
+            font-weight: 600;
+        }
+        .calendar-date.selected {
+            background: #2563eb;
+            color: #fff;
+            border: 1.5px solid #1746a2;
+            font-weight: 600;
+            z-index: 1;
+        }
+        .calendar-date:hover {
+            background: #e3e7ed;
+            color: #1746a2;
+            border: 1.5px solid #2563eb;
+        }
+        .calendar-date:active {
+            background: #1746a2;
+            color: #fff;
+        }
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(34, 49, 74, 0.18);
+            justify-content: center;
+            align-items: center;
+        }
+        .modal.active {
+            display: flex;
+        }
+        .modal-content {
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 16px rgba(44, 62, 80, 0.18);
+            padding: 28px 24px 20px 24px;
+            min-width: 340px;
+            max-width: 95vw;
+            position: relative;
+        }
+        .modal-content h3 {
+            margin-top: 0;
+            color: #22314a;
+            font-size: 1.08em;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+        .leave-list {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+        .leave-list-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 0;
+        }
+        .leave-list-table th, .leave-list-table td {
+            padding: 8px 6px;
+            border-bottom: 1px solid #e3e7ed;
+            text-align: left;
+            font-size: 0.98em;
+        }
+        .leave-list-table th {
+            background: #f5f7fa;
+            color: #22314a;
+            font-weight: 600;
+        }
+        .leave-list-table tr:last-child td {
+            border-bottom: none;
+        }
+        .leave-actions {
+            display: flex;
+            gap: 8px;
+        }
+        .leave-actions button {
+            padding: 5px 14px;
+            border-radius: 5px;
+            border: none;
+            font-size: 0.98em;
+            font-weight: 600;
+            cursor: pointer;
+            background: #e3e7ed;
+            color: #22314a;
+            transition: background 0.15s;
+        }
+        .leave-actions button.accept {
+            background: #2563eb;
+            color: #fff;
+        }
+        .leave-actions button.reject {
+            background: #e74c3c;
+            color: #fff;
+        }
+        .leave-actions button:hover.accept {
+            background: #1746a2;
+        }
+        .leave-actions button:hover.reject {
+            background: #c0392b;
+        }
+        .modal-close {
+            position: absolute;
+            top: 10px;
+            right: 18px;
+            font-size: 1.2em;
+            color: #aaa;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="header-bar">HR Leave Management Portal</div>
+    <div class="dashboard-container">
+        <div class="dashboard-title">HR Dashboard - Leave Calendar</div>
+        <div class="calendar-header">
+            <button id="prevMonth" title="Previous Month">&#8592;</button>
+            <span id="monthYear"></span>
+            <button id="nextMonth" title="Next Month">&#8594;</button>
+        </div>
+        <div class="calendar-grid" id="calendarDays"></div>
+        <div class="calendar-grid" id="calendarDates"></div>
+    </div>
+    <!-- Modal for leave details -->
+    <div class="modal" id="leaveModal">
+        <div class="modal-content">
+            <span class="modal-close" id="closeModal">&times;</span>
+            <h3>Leave Requests for <span id="modalDate"></span></h3>
+            <ul class="leave-list" id="leaveList"></ul>
+        </div>
+    </div>
+    <script>
+        const monthYear = document.getElementById('monthYear');
+        const calendarDays = document.getElementById('calendarDays');
+        const calendarDates = document.getElementById('calendarDates');
+        const prevMonthBtn = document.getElementById('prevMonth');
+        const nextMonthBtn = document.getElementById('nextMonth');
+        const leaveModal = document.getElementById('leaveModal');
+        const leaveList = document.getElementById('leaveList');
+        const modalDate = document.getElementById('modalDate');
+        const closeModal = document.getElementById('closeModal');
+
+        const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+        let today = new Date();
+        let currentMonth = today.getMonth();
+        let currentYear = today.getFullYear();
+        let selectedDate = null;
+        let leaves = [];
+
+        function renderDays() {
+            calendarDays.innerHTML = '';
+            daysOfWeek.forEach(day => {
+                const dayDiv = document.createElement('div');
+                dayDiv.className = 'calendar-day';
+                dayDiv.textContent = day;
+                calendarDays.appendChild(dayDiv);
+            });
+        }
+
+        function renderDates(month, year) {
+            calendarDates.innerHTML = '';
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+            // Fill empty slots before first day
+            for (let i = 0; i < firstDay; i++) {
+                const emptyDiv = document.createElement('div');
+                calendarDates.appendChild(emptyDiv);
+            }
+
+            for (let date = 1; date <= daysInMonth; date++) {
+                const dateDiv = document.createElement('div');
+                dateDiv.className = 'calendar-date';
+                dateDiv.textContent = date;
+                const dateStr = new Date(year, month, date).toISOString().split('T')[0];
+                if (leaves.some(l => l.date === dateStr)) {
+                    dateDiv.classList.add('leave-marked');
+                    dateDiv.addEventListener('click', () => {
+                        selectedDate = new Date(year, month, date);
+                        openLeaveModal(dateStr);
+                    });
+                } else {
+                    dateDiv.addEventListener('click', () => {
+                        selectedDate = new Date(year, month, date);
+                    });
+                }
+                calendarDates.appendChild(dateDiv);
+            }
+        }
+
+        function openLeaveModal(dateStr) {
+            modalDate.textContent = dateStr;
+            leaveList.innerHTML = '';
+            const leavesForDate = leaves.filter(l => l.date === dateStr);
+            if (leavesForDate.length === 0) {
+                leaveList.innerHTML = '<li>No leave requests for this date.</li>';
+            } else {
+                let table = document.createElement('table');
+                table.className = 'leave-list-table';
+                table.innerHTML = `
+                    <thead>
+                        <tr>
+                            <th>Employee</th>
+                            <th>Type</th>
+                            <th>Reason</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                `;
+                const tbody = table.querySelector('tbody');
+                leavesForDate.forEach((leave, idx) => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${leave.employee || 'N/A'}</td>
+                        <td>${leave.type}</td>
+                        <td>${leave.reason}</td>
+                        <td>
+                            <div class="leave-actions">
+                                <button class="accept" onclick="acceptLeave(${idx}, '${dateStr}')">Accept</button>
+                                <button class="reject" onclick="rejectLeave(${idx}, '${dateStr}')">Reject</button>
+                            </div>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+                leaveList.appendChild(table);
+            }
+            leaveModal.classList.add('active');
+        }
+
+        window.acceptLeave = async function(idx, dateStr) {
+            // Here you would call the backend to update leave status
+            alert('Leave accepted for ' + dateStr);
+            leaveModal.classList.remove('active');
+        };
+        window.rejectLeave = async function(idx, dateStr) {
+            // Here you would call the backend to update leave status
+            alert('Leave rejected for ' + dateStr);
+            leaveModal.classList.remove('active');
+        };
+
+        closeModal.addEventListener('click', function() {
+            leaveModal.classList.remove('active');
+        });
+        leaveModal.addEventListener('click', function(e) {
+            if (e.target === leaveModal) leaveModal.classList.remove('active');
+        });
+
+        prevMonthBtn.addEventListener('click', () => {
+            currentMonth--;
+            if (currentMonth < 0) {
+                currentMonth = 11;
+                currentYear--;
+            }
+            today = new Date(currentYear, currentMonth, 1);
+            updateCalendarWithLeaves();
+        });
+
+        nextMonthBtn.addEventListener('click', () => {
+            currentMonth++;
+            if (currentMonth > 11) {
+                currentMonth = 0;
+                currentYear++;
+            }
+            today = new Date(currentYear, currentMonth, 1);
+            updateCalendarWithLeaves();
+        });
+
+        async function fetchLeaves() {
+            try {
+                const res = await fetch('http://localhost:5502/api/leaves');
+                leaves = await res.json();
+            } catch {
+                leaves = [];
+            }
+        }
+
+        async function updateCalendarWithLeaves() {
+            await fetchLeaves();
+            monthYear.textContent = `${today.toLocaleString('default', { month: 'long' })} ${currentYear}`;
+            renderDays();
+            renderDates(currentMonth, currentYear);
+        }
+
+        // Initial load
+        updateCalendarWithLeaves();
+    </script>
+</body>
+</html> 
