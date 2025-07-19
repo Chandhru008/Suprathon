@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Employee Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="employee_home.css">
+  <!-- Optionally include Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <span class="sidebar-logo"><i class="fa-solid fa-users"></i></span>
+        <span class="sidebar-title">HR Management</span>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="employee_home.html" class="nav-link active"><i class="fa-solid fa-house"></i> Dashboard</a>
+        <a href="employee_profile.html" class="nav-link"><i class="fa-solid fa-user"></i> Profile</a>
+        <a href="#" class="nav-link"><i class="fa-solid fa-calendar-check"></i> Attendance</a>
+        <a href="#" class="nav-link"><i class="fa-solid fa-tasks"></i> Tasks</a>
+        <a href="calender.html" class="nav-link"><i class="fa-solid fa-calendar-alt"></i> Leave Overview</a>
+        <a href="#" class="nav-link"><i class="fa-solid fa-money-check-dollar"></i> Payroll & Compensation</a>
+        <a href="#" class="nav-link"><i class="fa-solid fa-gear"></i> Settings</a>
+        <a href="#" class="nav-link"><i class="fa-solid fa-sign-out-alt"></i> Logout</a>
+      </nav>
+    </aside>
+    <div class="main-area">
+      <header class="topbar">
+        <div class="topbar-left"></div>
+        <div class="topbar-right">
+          <span class="user-name">Alex Morgan</span>
+          <span class="user-avatar">AM</span>
+        </div>
+      </header>
+      <main class="main-content">
+        <section class="card" id="tasksSection">
+          <h2>Your Tasks</h2>
+          <ul>
+            <li>Complete onboarding documents</li>
+            <li>Attend team meeting at 10:00 AM</li>
+            <li>Submit weekly report</li>
+          </ul>
+        </section>
+        <section class="card" id="announcementsSection">
+          <h2>Announcements</h2>
+          <p>Welcome to the company portal! Check back here for important updates.</p>
+        </section>
+      </main>
+    </div>
+  </div>
+</body>
+</html>

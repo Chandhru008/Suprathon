@@ -159,7 +159,7 @@ app.post("/verify-otp.html", (req, res) => {
     delete otpStore[username]; // Remove OTP after successful verification
     console.log(`OTP verified for ${username}`);
 
-    res.redirect("/tags.html");
+    res.redirect("/employee_home.html");
   } else {
     console.log(
       `Invalid OTP for ${username}. Expected: ${otpStore[username]}, Received: ${otp}`

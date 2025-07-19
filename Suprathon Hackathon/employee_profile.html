@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Employee Profile</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="employee_home.css">
+  <!-- Optionally include Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <span class="sidebar-logo"><i class="fa-solid fa-users"></i></span>
+        <span class="sidebar-title">HR Management</span>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="employee_home.html" class="nav-link"><i class="fa-solid fa-house"></i> Dashboard</a>
+        <a href="profile.html" class="nav-link active"><i class="fa-solid fa-user"></i> Profile</a>
+        <a href="#" class="nav-link"><i class="fa-solid fa-calendar-check"></i> Attendance</a>
+        <a href="#" class="nav-link"><i class="fa-solid fa-tasks"></i> Tasks</a>
+        <a href="#" class="nav-link"><i class="fa-solid fa-calendar-alt"></i> Leave Overview</a>
+        <a href="#" class="nav-link"><i class="fa-solid fa-money-check-dollar"></i> Payroll & Compensation</a>
+        <a href="#" class="nav-link"><i class="fa-solid fa-gear"></i> Settings</a>
+        <a href="#" class="nav-link"><i class="fa-solid fa-sign-out-alt"></i> Logout</a>
+      </nav>
+    </aside>
+    <div class="main-area">
+      <header class="topbar">
+        <div class="topbar-left"></div>
+        <div class="topbar-right">
+          <span class="user-name">Rhythm Thakur</span>
+          <span class="user-avatar">RT</span>
+        </div>
+      </header>
+      <main class="main-content">
+        <section class="profile-card modern-profile-card">
+          <h2 class="profile-title">Employee Profile</h2>
+          <form id="profileForm" class="modern-profile-form two-col-profile-form">
+            <div class="profile-row">
+              <label for="firstNameInput">First Name</label>
+              <span class="profile-value" id="firstNameView">John</span>
+              <input class="profile-input" id="firstNameInput" type="text" value="John" style="display:none;">
+            </div>
+            <div class="profile-row">
+              <label for="middleNameInput">Middle Name</label>
+              <span class="profile-value" id="middleNameView">A.</span>
+              <input class="profile-input" id="middleNameInput" type="text" value="A." style="display:none;">
+            </div>
+            <div class="profile-row">
+              <label for="lastNameInput">Last Name</label>
+              <span class="profile-value" id="lastNameView">Doe</span>
+              <input class="profile-input" id="lastNameInput" type="text" value="Doe" style="display:none;">
+            </div>
+            <div class="profile-row">
+              <label for="emailInput">Email</label>
+              <span class="profile-value" id="emailView">john.doe@email.com</span>
+              <input class="profile-input" id="emailInput" type="email" value="john.doe@email.com" style="display:none;">
+            </div>
+            <div class="profile-row">
+              <label for="phoneInput">Phone Number</label>
+              <span class="profile-value" id="phoneView">+1 234 567 8901</span>
+              <input class="profile-input" id="phoneInput" type="tel" value="+1 234 567 8901" style="display:none;">
+            </div>
+            <div class="profile-row">
+              <label for="dobInput">Date of Birth</label>
+              <span class="profile-value" id="dobView">1990-01-01</span>
+              <input class="profile-input" id="dobInput" type="date" value="1990-01-01" style="display:none;">
+            </div>
+            <div class="profile-row">
+              <label for="genderInput">Gender</label>
+              <span class="profile-value" id="genderView">Male</span>
+              <select class="profile-input" id="genderInput" style="display:none;">
+                <option>Male</option>
+                <option>Female</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div class="profile-row">
+              <label for="departmentInput">Department</label>
+              <span class="profile-value" id="departmentView">Engineering</span>
+              <input class="profile-input" id="departmentInput" type="text" value="Engineering" style="display:none;">
+            </div>
+            <div class="profile-row">
+              <label for="designationInput">Designation</label>
+              <span class="profile-value" id="designationView">Software Engineer</span>
+              <input class="profile-input" id="designationInput" type="text" value="Software Engineer" style="display:none;">
+            </div>
+            <div class="profile-row">
+              <label for="employeeIdInput">Employee ID</label>
+              <span class="profile-value" id="employeeIdView">12345</span>
+              <input class="profile-input" id="employeeIdInput" type="text" value="12345" style="display:none;">
+            </div>
+            <div class="profile-row">
+              <label for="addressInput">Address</label>
+              <span class="profile-value" id="addressView">123 Main St</span>
+              <input class="profile-input" id="addressInput" type="text" value="123 Main St" style="display:none;">
+            </div>
+            <div class="profile-row">
+              <label for="cityInput">City</label>
+              <span class="profile-value" id="cityView">New York</span>
+              <input class="profile-input" id="cityInput" type="text" value="New York" style="display:none;">
+            </div>
+            <div class="profile-row">
+              <label for="stateInput">State</label>
+              <span class="profile-value" id="stateView">NY</span>
+              <input class="profile-input" id="stateInput" type="text" value="NY" style="display:none;">
+            </div>
+            <div class="profile-row">
+              <label for="zipInput">Zip Code</label>
+              <span class="profile-value" id="zipView">10001</span>
+              <input class="profile-input" id="zipInput" type="text" value="10001" style="display:none;">
+            </div>
+            <div class="profile-row">
+              <label for="countryInput">Country</label>
+              <span class="profile-value" id="countryView">USA</span>
+              <input class="profile-input" id="countryInput" type="text" value="USA" style="display:none;">
+            </div>
+            <div class="profile-row">
+              <label for="dojInput">Date of Joining</label>
+              <span class="profile-value" id="dojView">2020-01-15</span>
+              <input class="profile-input" id="dojInput" type="date" value="2020-01-15" style="display:none;">
+            </div>
+            <div class="profile-row">
+              <label for="emergencyNameInput">Emergency Contact Name</label>
+              <span class="profile-value" id="emergencyNameView">Jane Doe</span>
+              <input class="profile-input" id="emergencyNameInput" type="text" value="Jane Doe" style="display:none;">
+            </div>
+            <div class="profile-row">
+              <label for="emergencyPhoneInput">Emergency Contact Number</label>
+              <span class="profile-value" id="emergencyPhoneView">+1 987 654 3210</span>
+              <input class="profile-input" id="emergencyPhoneInput" type="tel" value="+1 987 654 3210" style="display:none;">
+            </div>
+            <div class="profile-actions" id="profileActions" style="display:none;">
+              <button type="button" class="save-btn" id="saveProfileBtn">Save</button>
+              <button type="button" class="cancel-btn" id="cancelProfileBtn">Cancel</button>
+            </div>
+          </form>
+          <div class="profile-edit-btn-row" id="editBtnRow">
+            <button class="edit-btn" id="editProfileBtn">Edit</button>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+  <script>
+  const editBtn = document.getElementById('editProfileBtn');
+  const saveBtn = document.getElementById('saveProfileBtn');
+  const cancelBtn = document.getElementById('cancelProfileBtn');
+  const profileActions = document.getElementById('profileActions');
+  const editBtnRow = document.getElementById('editBtnRow');
+
+  const fields = [
+    {view: 'firstNameView', input: 'firstNameInput'},
+    {view: 'middleNameView', input: 'middleNameInput'},
+    {view: 'lastNameView', input: 'lastNameInput'},
+    {view: 'emailView', input: 'emailInput'},
+    {view: 'phoneView', input: 'phoneInput'},
+    {view: 'dobView', input: 'dobInput'},
+    {view: 'genderView', input: 'genderInput'},
+    {view: 'departmentView', input: 'departmentInput'},
+    {view: 'designationView', input: 'designationInput'},
+    {view: 'employeeIdView', input: 'employeeIdInput'},
+    {view: 'addressView', input: 'addressInput'},
+    {view: 'cityView', input: 'cityInput'},
+    {view: 'stateView', input: 'stateInput'},
+    {view: 'zipView', input: 'zipInput'},
+    {view: 'countryView', input: 'countryInput'},
+    {view: 'dojView', input: 'dojInput'},
+    {view: 'emergencyNameView', input: 'emergencyNameInput'},
+    {view: 'emergencyPhoneView', input: 'emergencyPhoneInput'}
+  ];
+
+  function setEditMode(editing) {
+    fields.forEach(f => {
+      document.getElementById(f.input).style.display = editing ? '' : 'none';
+      document.getElementById(f.view).style.display = editing ? 'none' : '';
+    });
+    profileActions.style.display = editing ? '' : 'none';
+    editBtnRow.style.display = editing ? 'none' : '';
+  }
+
+  editBtn.onclick = function() {
+    setEditMode(true);
+  };
+  cancelBtn.onclick = function() {
+    setEditMode(false);
+  };
+  saveBtn.onclick = function() {
+    fields.forEach(f => {
+      const input = document.getElementById(f.input);
+      const view = document.getElementById(f.view);
+      view.textContent = input.value;
+    });
+    setEditMode(false);
+  };
+  setEditMode(false);
+  </script>
+</body>
+</html> 
