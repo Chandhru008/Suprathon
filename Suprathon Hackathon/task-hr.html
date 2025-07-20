@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HR Task Management & Analytics - HR Management System</title>
+    <link rel="stylesheet" href="employee_home.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Navigation Bar */
+        .navbar {
+            background: rgba(45, 62, 80, 0.95);
+            color: #fff;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 16px rgba(44, 62, 80, 0.10);
+        }
+
+        .navbar-brand {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #fff;
+            text-decoration: none;
+            letter-spacing: 1px;
+        }
+
+        .navbar-nav {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        .nav-link:hover {
+            background: #a5b4fc;
+            color: #2d3e50;
+        }
+
+        .logout-btn {
+            background: #ef4444;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 0.6rem 1.2rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.2s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .logout-btn:hover {
+            background: #dc2626;
+            transform: translateY(-2px);
+        }
+
+        /* Main Container */
+        .container {
+            margin-top: 100px;
+            padding: 2rem;
+            max-width: 1400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .page-title {
+            text-align: center;
+            font-size: 2.8rem;
+            color: #4f46e5;
+            margin-bottom: 2rem;
+            letter-spacing: 0.5px;
+        }
+
+        /* Dashboard Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .wide-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        /* Card Styles */
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 18px;
+            padding: 2rem;
+            box-shadow: 0 6px 24px rgba(44, 62, 80, 0.10);
+            border: 1.5px solid #e0e7ff;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(44, 62, 80, 0.13);
+        }
+
+        .card-title {
+            font-size: 1.8rem;
+            color: #4f46e5;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.8rem;
+        }
+
+        .card-icon {
+            font-size: 1.5rem;
+        }
+
+        /* Performance Charts */
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-top: 1rem;
+        }
+
+        .chart-small {
+            height: 250px;
+        }
+
+        /* Employee Performance Table */
+        .performance-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .performance-table th,
+        .performance-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .performance-table th {
+            background: rgba(79, 70, 229, 0.1);
+            color: #4f46e5;
+            font-weight: 600;
+        }
+
+        .performance-table tbody tr:hover {
+            background: rgba(245, 247, 255, 0.5);
+        }
+
+        .employee-name {
+            font-weight: 600;
+            color: #2d3e50;
+        }
+
+        .performance-score {
+            font-weight: 600;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+
+        .score-excellent {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .score-good {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .score-average {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .score-poor {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        /* Task Assignment */
+        .task-form {
+            display: grid;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            padding: 0.75rem;
+            border: 1.5px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.2s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .assign-btn {
+            background: #4f46e5;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 0.75rem 2rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.2s;
+            justify-self: start;
+        }
+
+        .assign-btn:hover {
+            background: #4338ca;
+            transform: translateY(-2px);
+        }
+
+        /* Employee List */
+        .employee-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .employee-item {
+            background: rgba(245, 247, 255, 0.8);
+            border-radius: 12px;
+            padding: 1.2rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid #4f46e5;
+            transition: background 0.2s ease;
+        }
+
+        .employee-item:hover {
+            background: rgba(235, 240, 255, 0.9);
+        }
+
+        .employee-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.8rem;
+        }
+
+        .employee-info h4 {
+            margin: 0;
+            color: #2d3e50;
+            font-size: 1.1rem;
+        }
+
+        .employee-info p {
+            margin: 0.2rem 0 0 0;
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+
+        .employee-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-btn {
+            padding: 0.4rem 0.8rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .feedback-btn {
+            background: #10b981;
+            color: #fff;
+        }
+
+        .feedback-btn:hover {
+            background: #059669;
+        }
+
+        .view-btn {
+            background: #6b7280;
+            color: #fff;
+        }
+
+        .view-btn:hover {
+            background: #4b5563;
+        }
+
+        /* Stats Cards */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 4px 16px rgba(44, 62, 80, 0.08);
+            border: 1.5px solid #e0e7ff;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #4f46e5;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #6b7a90;
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        /* Modal for Feedback */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: #fff;
+            border-radius: 18px;
+            padding: 2rem;
+            width: 90%;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            color: #4f46e5;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #6b7280;
+        }
+
+        .rating-input {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .star-input {
+            font-size: 1.5rem;
+            color: #d1d5db;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .star-input.active,
+        .star-input:hover {
+            color: #fbbf24;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .wide-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .page-title {
+                font-size: 2.2rem;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .performance-table {
+                font-size: 0.9rem;
+            }
+
+            .performance-table th,
+            .performance-table td {
+                padding: 0.5rem;
+            }
+
+            .stats-row {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <a href="ADMIN DASHBOARD.html" class="navbar-brand">HR Management - Admin</a>
+        <div class="navbar-nav">
+            <a href="ADMIN DASHBOARD.html" class="nav-link">Dashboard</a>
+            <a href="task-hr.html" class="nav-link">Task Management</a>
+            <a href="HR MANAGMENT/employees.html" class="nav-link">Employees</a>
+            <a href="payroll.html" class="nav-link">Payroll</a>
+            <a href="HR_attendence.html" class="nav-link">Attendance</a>
+            <a href="index.html" class="logout-btn">Logout</a>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="container">
+        <h1 class="page-title">🎯 HR Task Management & Analytics</h1>
+
+        <!-- Stats Row -->
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="stat-number" id="total-employees">48</div>
+                <div class="stat-label">Total Employees</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="active-tasks">156</div>
+                <div class="stat-label">Active Tasks</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="avg-performance">87%</div>
+                <div class="stat-label">Avg Performance</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="pending-reviews">12</div>
+                <div class="stat-label">Pending Reviews</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="completion-rate">94%</div>
+                <div class="stat-label">Task Completion Rate</div>
+            </div>
+        </div>
+
+        <!-- Analytics Grid -->
+        <div class="dashboard-grid">
+            <!-- Department Performance Chart -->
+            <div class="card">
+                <h2 class="card-title">
+                    <span class="card-icon">📊</span>
+                    Department Performance Overview
+                </h2>
+                <div class="chart-container">
+                    <canvas id="departmentChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Monthly Performance Trend -->
+            <div class="card">
+                <h2 class="card-title">
+                    <span class="card-icon">📈</span>
+                    Monthly Performance Trend
+                </h2>
+                <div class="chart-container">
+                    <canvas id="trendChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Task Assignment and Employee Management -->
+        <div class="wide-grid">
+            <!-- Task Assignment -->
+            <div class="card">
+                <h2 class="card-title">
+                    <span class="card-icon">📝</span>
+                    Assign New Task
+                </h2>
+                <form class="task-form" id="taskForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="employee">Assign To Employee</label>
+                            <select id="employee" required>
+                                <option value="">Select Employee</option>
+                                <option value="john-doe">John Doe - Software Engineer</option>
+                                <option value="sarah-smith">Sarah Smith - Marketing Specialist</option>
+                                <option value="mike-johnson">Mike Johnson - Sales Manager</option>
+                                <option value="emily-brown">Emily Brown - HR Specialist</option>
+                                <option value="david-wilson">David Wilson - Project Manager</option>
+                                <option value="lisa-anderson">Lisa Anderson - Designer</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="priority">Priority Level</label>
+                            <select id="priority" required>
+                                <option value="">Select Priority</option>
+                                <option value="high">High Priority</option>
+                                <option value="medium">Medium Priority</option>
+                                <option value="low">Low Priority</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="taskTitle">Task Title</label>
+                        <input type="text" id="taskTitle" required placeholder="Enter task title">
+                    </div>
+                    <div class="form-group">
+                        <label for="taskDescription">Task Description</label>
+                        <textarea id="taskDescription" required placeholder="Describe the task in detail..."></textarea>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="dueDate">Due Date</label>
+                            <input type="date" id="dueDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="category">Category</label>
+                            <select id="category" required>
+                                <option value="">Select Category</option>
+                                <option value="training">Training</option>
+                                <option value="compliance">Compliance</option>
+                                <option value="project">Project Work</option>
+                                <option value="administrative">Administrative</option>
+                                <option value="review">Performance Review</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button type="submit" class="assign-btn">Assign Task</button>
+                </form>
+            </div>
+
+            <!-- Employee Quick Actions -->
+            <div class="card">
+                <h2 class="card-title">
+                    <span class="card-icon">👥</span>
+                    Employee Quick Actions
+                </h2>
+                <div class="employee-list">
+                    <div class="employee-item">
+                        <div class="employee-header">
+                            <div class="employee-info">
+                                <h4>John Doe</h4>
+                                <p>Software Engineer • Tasks: 8 • Performance: 92%</p>
+                            </div>
+                            <div class="employee-actions">
+                                <button class="action-btn feedback-btn" onclick="openFeedbackModal('John Doe')">Give Feedback</button>
+                                <button class="action-btn view-btn">View Tasks</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="employee-item">
+                        <div class="employee-header">
+                            <div class="employee-info">
+                                <h4>Sarah Smith</h4>
+                                <p>Marketing Specialist • Tasks: 5 • Performance: 88%</p>
+                            </div>
+                            <div class="employee-actions">
+                                <button class="action-btn feedback-btn" onclick="openFeedbackModal('Sarah Smith')">Give Feedback</button>
+                                <button class="action-btn view-btn">View Tasks</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="employee-item">
+                        <div class="employee-header">
+                            <div class="employee-info">
+                                <h4>Mike Johnson</h4>
+                                <p>Sales Manager • Tasks: 12 • Performance: 95%</p>
+                            </div>
+                            <div class="employee-actions">
+                                <button class="action-btn feedback-btn" onclick="openFeedbackModal('Mike Johnson')">Give Feedback</button>
+                                <button class="action-btn view-btn">View Tasks</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="employee-item">
+                        <div class="employee-header">
+                            <div class="employee-info">
+                                <h4>Emily Brown</h4>
+                                <p>HR Specialist • Tasks: 7 • Performance: 91%</p>
+                            </div>
+                            <div class="employee-actions">
+                                <button class="action-btn feedback-btn" onclick="openFeedbackModal('Emily Brown')">Give Feedback</button>
+                                <button class="action-btn view-btn">View Tasks</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="employee-item">
+                        <div class="employee-header">
+                            <div class="employee-info">
+                                <h4>David Wilson</h4>
+                                <p>Project Manager • Tasks: 15 • Performance: 89%</p>
+                            </div>
+                            <div class="employee-actions">
+                                <button class="action-btn feedback-btn" onclick="openFeedbackModal('David Wilson')">Give Feedback</button>
+                                <button class="action-btn view-btn">View Tasks</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Employee Performance Table -->
+        <div class="card">
+            <h2 class="card-title">
+                <span class="card-icon">📋</span>
+                Employee Performance Summary
+            </h2>
+            <table class="performance-table">
+                <thead>
+                    <tr>
+                        <th>Employee Name</th>
+                        <th>Department</th>
+                        <th>Active Tasks</th>
+                        <th>Completed This Month</th>
+                        <th>Performance Score</th>
+                        <th>Last Feedback</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="employee-name">John Doe</td>
+                        <td>Engineering</td>
+                        <td>3</td>
+                        <td>8</td>
+                        <td><span class="performance-score score-excellent">92%</span></td>
+                        <td>Dec 15, 2024</td>
+                        <td>Active</td>
+                    </tr>
+                    <tr>
+                        <td class="employee-name">Sarah Smith</td>
+                        <td>Marketing</td>
+                        <td>2</td>
+                        <td>5</td>
+                        <td><span class="performance-score score-good">88%</span></td>
+                        <td>Dec 10, 2024</td>
+                        <td>Active</td>
+                    </tr>
+                    <tr>
+                        <td class="employee-name">Mike Johnson</td>
+                        <td>Sales</td>
+                        <td>4</td>
+                        <td>12</td>
+                        <td><span class="performance-score score-excellent">95%</span></td>
+                        <td>Dec 18, 2024</td>
+                        <td>Active</td>
+                    </tr>
+                    <tr>
+                        <td class="employee-name">Emily Brown</td>
+                        <td>Human Resources</td>
+                        <td>3</td>
+                        <td>7</td>
+                        <td><span class="performance-score score-excellent">91%</span></td>
+                        <td>Dec 12, 2024</td>
+                        <td>Active</td>
+                    </tr>
+                    <tr>
+                        <td class="employee-name">David Wilson</td>
+                        <td>Project Management</td>
+                        <td>5</td>
+                        <td>15</td>
+                        <td><span class="performance-score score-good">89%</span></td>
+                        <td>Dec 16, 2024</td>
+                        <td>Active</td>
+                    </tr>
+                    <tr>
+                        <td class="employee-name">Lisa Anderson</td>
+                        <td>Design</td>
+                        <td>2</td>
+                        <td>6</td>
+                        <td><span class="performance-score score-good">85%</span></td>
+                        <td>Dec 8, 2024</td>
+                        <td>Active</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Feedback Modal -->
+    <div class="modal" id="feedbackModal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeFeedbackModal()">&times;</button>
+            <h3 class="modal-title">Give Feedback to <span id="feedbackEmployeeName"></span></h3>
+            <form id="feedbackForm">
+                <div class="form-group">
+                    <label>Performance Rating</label>
+                    <div class="rating-input" id="ratingInput">
+                        <span class="star-input" data-rating="1">⭐</span>
+                        <span class="star-input" data-rating="2">⭐</span>
+                        <span class="star-input" data-rating="3">⭐</span>
+                        <span class="star-input" data-rating="4">⭐</span>
+                        <span class="star-input" data-rating="5">⭐</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="feedbackMessage">Feedback Message</label>
+                    <textarea id="feedbackMessage" required placeholder="Provide constructive feedback..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="feedbackType">Feedback Type</label>
+                    <select id="feedbackType" required>
+                        <option value="">Select Type</option>
+                        <option value="performance">Performance Review</option>
+                        <option value="improvement">Improvement Areas</option>
+                        <option value="recognition">Recognition</option>
+                        <option value="goal-setting">Goal Setting</option>
+                    </select>
+                </div>
+                <button type="submit" class="assign-btn">Submit Feedback</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Department Performance Chart
+        const deptCtx = document.getElementById('departmentChart').getContext('2d');
+        const departmentChart = new Chart(deptCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Engineering', 'Marketing', 'Sales', 'HR', 'Design', 'Operations'],
+                datasets: [{
+                    data: [92, 88, 95, 90, 85, 87],
+                    backgroundColor: [
+                        '#4f46e5',
+                        '#10b981',
+                        '#f59e0b',
+                        '#ef4444',
+                        '#8b5cf6',
+                        '#06b6d4'
+                    ],
+                    borderWidth: 0,
+                    cutout: '60%'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right',
+                        labels: {
+                            padding: 20,
+                            usePointStyle: true,
+                            font: {
+                                size: 11
+                            }
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                        titleColor: '#ffffff',
+                        bodyColor: '#ffffff',
+                        cornerRadius: 8,
+                        padding: 12,
+                        callbacks: {
+                            label: function(context) {
+                                return context.label + ': ' + context.parsed + '%';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Monthly Trend Chart
+        const trendCtx = document.getElementById('trendChart').getContext('2d');
+        const trendChart = new Chart(trendCtx, {
+            type: 'line',
+            data: {
+                labels: ['Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                datasets: [{
+                    label: 'Overall Performance',
+                    data: [82, 85, 87, 89, 88, 90],
+                    borderColor: '#4f46e5',
+                    backgroundColor: 'rgba(79, 70, 229, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4
+                }, {
+                    label: 'Task Completion Rate',
+                    data: [89, 91, 93, 95, 94, 96],
+                    borderColor: '#10b981',
+                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            padding: 20,
+                            usePointStyle: true,
+                            font: {
+                                size: 12
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        min: 75,
+                        max: 100,
+                        ticks: {
+                            callback: function(value) {
+                                return value + '%';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Task Form Submission
+        document.getElementById('taskForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = {
+                employee: document.getElementById('employee').value,
+                priority: document.getElementById('priority').value,
+                title: document.getElementById('taskTitle').value,
+                description: document.getElementById('taskDescription').value,
+                dueDate: document.getElementById('dueDate').value,
+                category: document.getElementById('category').value
+            };
+
+            // Simulate task assignment
+            alert(`Task "${formData.title}" assigned to ${document.getElementById('employee').selectedOptions[0].text} successfully!`);
+            
+            // Reset form
+            this.reset();
+            
+            // Update stats (simulate)
+            const activeTasksEl = document.getElementById('active-tasks');
+            activeTasksEl.textContent = parseInt(activeTasksEl.textContent) + 1;
+        });
+
+        // Feedback Modal Functions
+        function openFeedbackModal(employeeName) {
+            document.getElementById('feedbackEmployeeName').textContent = employeeName;
+            document.getElementById('feedbackModal').classList.add('active');
+        }
+
+        function closeFeedbackModal() {
+            document.getElementById('feedbackModal').classList.remove('active');
+            document.getElementById('feedbackForm').reset();
+            resetStarRating();
+        }
+
+        // Star Rating System
+        let selectedRating = 0;
+
+        document.querySelectorAll('.star-input').forEach(star => {
+            star.addEventListener('click', function() {
+                selectedRating = parseInt(this.dataset.rating);
+                updateStarRating(selectedRating);
+            });
+
+            star.addEventListener('mouseover', function() {
+                const hoverRating = parseInt(this.dataset.rating);
+                updateStarRating(hoverRating);
+            });
+        });
+
+        document.getElementById('ratingInput').addEventListener('mouseleave', function() {
+            updateStarRating(selectedRating);
+        });
+
+        function updateStarRating(rating) {
+            document.querySelectorAll('.star-input').forEach((star, index) => {
+                if (index < rating) {
+                    star.classList.add('active');
+                } else {
+                    star.classList.remove('active');
+                }
+            });
+        }
+
+        function resetStarRating() {
+            selectedRating = 0;
+            updateStarRating(0);
+        }
+
+        // Feedback Form Submission
+        document.getElementById('feedbackForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            if (selectedRating === 0) {
+                alert('Please select a rating before submitting feedback.');
+                return;
+            }
+
+            const employeeName = document.getElementById('feedbackEmployeeName').textContent;
+            const message = document.getElementById('feedbackMessage').value;
+            const type = document.getElementById('feedbackType').value;
+
+            // Simulate feedback submission
+            alert(`Feedback submitted for ${employeeName} successfully!\nRating: ${selectedRating} stars\nType: ${type}`);
+            
+            closeFeedbackModal();
+        });
+
+        // Close modal when clicking outside
+        document.getElementById('feedbackModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeFeedbackModal();
+            }
+        });
+
+        // Set minimum date to today
+        document.getElementById('dueDate').min = new Date().toISOString().split('T')[0];
+    </script>
+</body>
+</html>
