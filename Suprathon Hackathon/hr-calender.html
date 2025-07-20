@@ -7,40 +7,57 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
         body {
-            font-family: 'Inter', Arial, sans-serif;
-            background: #f5f7fa;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #b0c6ff 0%, #e0e7ff 100%);
+            min-height: 100vh;
             margin: 0;
             padding: 0;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
+            color: #222;
+            position: relative;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: radial-gradient(circle at 80% 20%, #a5b4fc 0%, transparent 60%),
+                        radial-gradient(circle at 20% 80%, #fbc2eb 0%, transparent 60%);
+            opacity: 0.35;
+            z-index: 0;
+            pointer-events: none;
         }
         .header-bar {
             width: 100vw;
-            background: #22314a;
+            background: rgba(45, 62, 80, 0.95);
             color: #fff;
-            padding: 18px 0 16px 0;
-            font-size: 1.25em;
-            font-weight: 600;
+            padding: 1.5rem 2rem;
+            font-size: 2rem;
+            font-weight: 700;
             letter-spacing: 1px;
-            text-align: center;
-            box-shadow: 0 2px 8px rgba(34,49,74,0.04);
+            text-align: left;
+            box-shadow: 0 4px 16px rgba(44, 62, 80, 0.10);
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
             margin-bottom: 0;
         }
         .dashboard-container {
-            background: #fff;
-            border-radius: 10px;
-            box-shadow: 0 2px 12px rgba(44, 62, 80, 0.08);
-            border: 1px solid #e3e7ed;
-            padding: 32px 28px 24px 28px;
+            background: rgba(255, 255, 255, 0.97);
+            border-radius: 18px;
+            box-shadow: 0 6px 24px rgba(44, 62, 80, 0.10);
+            border: 1.5px solid #e0e7ff;
+            padding: 40px 32px 32px 32px;
             width: 440px;
             min-width: 320px;
-            margin: 32px auto 0 auto;
+            margin: 48px auto 0 auto;
+            position: relative;
+            z-index: 1;
         }
         .dashboard-title {
-            font-size: 1.18em;
+            font-size: 1.3em;
             font-weight: 600;
-            color: #22314a;
+            color: #4f46e5;
             margin-bottom: 18px;
             letter-spacing: 0.5px;
         }
@@ -51,71 +68,72 @@
             margin-bottom: 14px;
         }
         .calendar-header button {
-            background: #e3e7ed;
+            background: #4f46e5;
             border: none;
-            border-radius: 6px;
-            width: 32px;
-            height: 32px;
-            font-size: 1.1em;
-            color: #22314a;
+            border-radius: 8px;
+            width: 36px;
+            height: 36px;
+            font-size: 1.2em;
+            color: #fff;
             font-weight: 600;
             cursor: pointer;
             transition: background 0.15s, color 0.15s;
+            box-shadow: 0 2px 8px rgba(165, 180, 252, 0.10);
         }
         .calendar-header button:hover {
-            background: #2563eb;
-            color: #fff;
+            background: #a5b4fc;
+            color: #2d3e50;
         }
         .calendar-header span {
             font-weight: 600;
-            font-size: 1.08em;
-            color: #22314a;
+            font-size: 1.1em;
+            color: #2d3e50;
             letter-spacing: 0.5px;
         }
         .calendar-grid {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
-            gap: 6px;
+            gap: 8px;
         }
         .calendar-day, .calendar-date {
             text-align: center;
-            padding: 8px 0;
+            padding: 10px 0;
         }
         .calendar-day {
             font-weight: 600;
             color: #6b7a90;
-            font-size: 0.98em;
+            font-size: 1em;
         }
         .calendar-date {
-            background: #f5f7fa;
-            border-radius: 6px;
+            background: #f4f6fb;
+            border-radius: 8px;
             cursor: pointer;
             font-size: 1em;
-            color: #22314a;
-            border: 1px solid transparent;
+            color: #2d3e50;
+            border: 1px solid #e0e7ff;
             transition: background 0.18s, color 0.18s, border 0.18s;
             position: relative;
         }
-        .calendar-date.leave-marked {
-            background: #eaf1fb;
-            color: #1746a2;
-            border: 1.5px solid #2563eb;
-            font-weight: 600;
-        }
         .calendar-date.selected {
-            background: #2563eb;
+            background: #4f46e5;
             color: #fff;
-            border: 1.5px solid #1746a2;
+            border: 1.5px solid #4f46e5;
             font-weight: 600;
             z-index: 1;
         }
+        .calendar-date.leave-marked {
+            background: #a5b4fc;
+            color: #4f46e5;
+            border: 1.5px solid #4f46e5;
+            font-weight: 600;
+        }
         .calendar-date:hover {
-            background: #e3e7ed;
-            color: #1746a2;
-            border: 1.5px solid #2563eb;
+            background: #a5b4fc;
+            color: #2d3e50;
+            border: 1.5px solid #4f46e5;
         }
         .calendar-date:active {
-            background: #1746a2;
+            background: #4f46e5;
             color: #fff;
         }
         /* Modal styles */
@@ -136,19 +154,19 @@
         }
         .modal-content {
             background: #fff;
-            border-radius: 10px;
-            box-shadow: 0 2px 16px rgba(44, 62, 80, 0.18);
-            padding: 28px 24px 20px 24px;
+            border-radius: 18px;
+            box-shadow: 0 6px 24px rgba(44, 62, 80, 0.10);
+            padding: 32px 28px 24px 28px;
             min-width: 340px;
             max-width: 95vw;
             position: relative;
         }
         .modal-content h3 {
             margin-top: 0;
-            color: #22314a;
-            font-size: 1.08em;
+            color: #4f46e5;
+            font-size: 1.1em;
             font-weight: 600;
-            margin-bottom: 12px;
+            margin-bottom: 14px;
         }
         .leave-list {
             margin: 0;
@@ -179,29 +197,26 @@
             gap: 8px;
         }
         .leave-actions button {
-            padding: 5px 14px;
-            border-radius: 5px;
+            padding: 7px 18px;
+            border-radius: 8px;
             border: none;
-            font-size: 0.98em;
+            font-size: 1em;
             font-weight: 600;
             cursor: pointer;
-            background: #e3e7ed;
-            color: #22314a;
-            transition: background 0.15s;
+            background: #4f46e5;
+            color: #fff;
+            transition: background 0.2s, color 0.2s;
+            box-shadow: 0 2px 8px rgba(165, 180, 252, 0.10);
         }
         .leave-actions button.accept {
-            background: #2563eb;
-            color: #fff;
+            background: #059669;
         }
         .leave-actions button.reject {
-            background: #e74c3c;
-            color: #fff;
+            background: #e53e3e;
         }
-        .leave-actions button:hover.accept {
-            background: #1746a2;
-        }
-        .leave-actions button:hover.reject {
-            background: #c0392b;
+        .leave-actions button:hover {
+            background: #a5b4fc;
+            color: #2d3e50;
         }
         .modal-close {
             position: absolute;
@@ -210,6 +225,16 @@
             font-size: 1.2em;
             color: #aaa;
             cursor: pointer;
+        }
+        @media (max-width: 600px) {
+            .dashboard-container {
+                width: 98vw;
+                padding: 16px 4px 12px 4px;
+            }
+            .modal-content {
+                min-width: 90vw;
+                padding: 18px 6px 12px 6px;
+            }
         }
     </style>
 </head>
