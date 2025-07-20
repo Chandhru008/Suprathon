@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Tasks & Performance - HR Management System</title>
+    <link rel="stylesheet" href="employee_home.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Navigation Bar */
+        .navbar {
+            background: rgba(45, 62, 80, 0.95);
+            color: #fff;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 16px rgba(44, 62, 80, 0.10);
+        }
+
+        .navbar-brand {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #fff;
+            text-decoration: none;
+            letter-spacing: 1px;
+        }
+
+        .navbar-nav {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        .nav-link:hover {
+            background: #a5b4fc;
+            color: #2d3e50;
+        }
+
+        .logout-btn {
+            background: #ef4444;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 0.6rem 1.2rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.2s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .logout-btn:hover {
+            background: #dc2626;
+            transform: translateY(-2px);
+        }
+
+        /* Main Container */
+        .container {
+            margin-top: 100px;
+            padding: 2rem;
+            max-width: 1400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .page-title {
+            text-align: center;
+            font-size: 2.8rem;
+            color: #4f46e5;
+            margin-bottom: 2rem;
+            letter-spacing: 0.5px;
+        }
+
+        /* Dashboard Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        /* Card Styles */
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 18px;
+            padding: 2rem;
+            box-shadow: 0 6px 24px rgba(44, 62, 80, 0.10);
+            border: 1.5px solid #e0e7ff;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(44, 62, 80, 0.13);
+        }
+
+        .card-title {
+            font-size: 1.8rem;
+            color: #4f46e5;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .card-icon {
+            font-size: 1.5rem;
+        }
+
+        /* Performance Chart */
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-top: 1rem;
+        }
+
+        /* Task List */
+        .task-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .task-item {
+            background: rgba(245, 247, 255, 0.8);
+            border-radius: 12px;
+            padding: 1.2rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid #4f46e5;
+            transition: background 0.2s ease;
+        }
+
+        .task-item:hover {
+            background: rgba(235, 240, 255, 0.9);
+        }
+
+        .task-header {
+            display: flex;
+            justify-content: between;
+            align-items: flex-start;
+            margin-bottom: 0.8rem;
+            flex-wrap: wrap;
+        }
+
+        .task-title {
+            font-weight: 600;
+            color: #2d3e50;
+            font-size: 1.1rem;
+            flex: 1;
+            margin-right: 1rem;
+        }
+
+        .task-status {
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .status-pending {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .status-in-progress {
+            background: #dbeafe;
+            color: #2563eb;
+        }
+
+        .status-completed {
+            background: #d1fae5;
+            color: #059669;
+        }
+
+        .status-overdue {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .task-description {
+            color: #6b7a90;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin-bottom: 0.8rem;
+        }
+
+        .task-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+            color: #9ca3af;
+        }
+
+        .task-deadline {
+            font-weight: 500;
+        }
+
+        .task-priority {
+            padding: 0.2rem 0.6rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .priority-high {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .priority-medium {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .priority-low {
+            background: #d1fae5;
+            color: #059669;
+        }
+
+        /* Feedback Section */
+        .feedback-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .feedback-item {
+            background: rgba(245, 247, 255, 0.8);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.2rem;
+            border-left: 4px solid #10b981;
+        }
+
+        .feedback-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .feedback-from {
+            font-weight: 600;
+            color: #2d3e50;
+            font-size: 1.1rem;
+        }
+
+        .feedback-date {
+            font-size: 0.85rem;
+            color: #9ca3af;
+        }
+
+        .feedback-content {
+            color: #4b5563;
+            line-height: 1.6;
+            margin-bottom: 0.8rem;
+        }
+
+        .rating {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .stars {
+            color: #fbbf24;
+        }
+
+        .rating-text {
+            font-size: 0.9rem;
+            color: #6b7280;
+        }
+
+        /* Stats Cards */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 4px 16px rgba(44, 62, 80, 0.08);
+            border: 1.5px solid #e0e7ff;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #4f46e5;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #6b7a90;
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .page-title {
+                font-size: 2.2rem;
+            }
+
+            .task-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+
+            .task-meta {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.3rem;
+            }
+
+            .stats-row {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <a href="employee_home.html" class="navbar-brand">HR Management - Employee</a>
+        <div class="navbar-nav">
+            <a href="employee_home.html" class="nav-link">Dashboard</a>
+            <a href="task-employee.html" class="nav-link">Tasks</a>
+            <a href="employee_profile.html" class="nav-link">Profile</a>
+            <a href="calender.html" class="nav-link">Calendar</a>
+            <a href="index.html" class="logout-btn">Logout</a>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="container">
+        <h1 class="page-title">📋 Tasks & Performance Dashboard</h1>
+
+        <!-- Stats Row -->
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="stat-number" id="total-tasks">12</div>
+                <div class="stat-label">Total Tasks</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="completed-tasks">8</div>
+                <div class="stat-label">Completed</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="pending-tasks">3</div>
+                <div class="stat-label">Pending</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="overdue-tasks">1</div>
+                <div class="stat-label">Overdue</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="performance-score">85%</div>
+                <div class="stat-label">Performance Score</div>
+            </div>
+        </div>
+
+        <!-- Dashboard Grid -->
+        <div class="dashboard-grid">
+            <!-- Performance Chart -->
+            <div class="card">
+                <h2 class="card-title">
+                    <span class="card-icon">📈</span>
+                    Performance Overview
+                </h2>
+                <div class="chart-container">
+                    <canvas id="performanceChart"></canvas>
+                </div>
+            </div>
+
+            <!-- HR Feedback -->
+            <div class="card">
+                <h2 class="card-title">
+                    <span class="card-icon">💬</span>
+                    Recent HR Feedback
+                </h2>
+                <div class="feedback-list">
+                    <div class="feedback-item">
+                        <div class="feedback-header">
+                            <div class="feedback-from">Sarah Johnson (HR Manager)</div>
+                            <div class="feedback-date">Dec 15, 2024</div>
+                        </div>
+                        <div class="feedback-content">
+                            Excellent work on the Q4 project deliverables. Your attention to detail and proactive communication with the team has been outstanding.
+                        </div>
+                        <div class="rating">
+                            <div class="stars">⭐⭐⭐⭐⭐</div>
+                            <div class="rating-text">Outstanding Performance</div>
+                        </div>
+                    </div>
+
+                    <div class="feedback-item">
+                        <div class="feedback-header">
+                            <div class="feedback-from">Mike Davis (Team Lead)</div>
+                            <div class="feedback-date">Dec 10, 2024</div>
+                        </div>
+                        <div class="feedback-content">
+                            Good progress on the client presentation. Consider adding more data visualization to strengthen your arguments.
+                        </div>
+                        <div class="rating">
+                            <div class="stars">⭐⭐⭐⭐</div>
+                            <div class="rating-text">Good Performance</div>
+                        </div>
+                    </div>
+
+                    <div class="feedback-item">
+                        <div class="feedback-header">
+                            <div class="feedback-from">Emily Chen (HR Specialist)</div>
+                            <div class="feedback-date">Dec 5, 2024</div>
+                        </div>
+                        <div class="feedback-content">
+                            Your collaboration skills have improved significantly this quarter. Keep up the great teamwork!
+                        </div>
+                        <div class="rating">
+                            <div class="stars">⭐⭐⭐⭐</div>
+                            <div class="rating-text">Good Performance</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- My Tasks -->
+        <div class="card">
+            <h2 class="card-title">
+                <span class="card-icon">✅</span>
+                My Tasks from HR
+            </h2>
+            <div class="task-list">
+                <div class="task-item">
+                    <div class="task-header">
+                        <div class="task-title">Complete Q4 Performance Self-Assessment</div>
+                        <div class="task-status status-pending">Pending</div>
+                    </div>
+                    <div class="task-description">
+                        Fill out the quarterly self-assessment form covering your achievements, challenges, and goals for the next quarter.
+                    </div>
+                    <div class="task-meta">
+                        <div class="task-deadline">Due: Dec 25, 2024</div>
+                        <div class="task-priority priority-high">High Priority</div>
+                    </div>
+                </div>
+
+                <div class="task-item">
+                    <div class="task-header">
+                        <div class="task-title">Attend Mandatory Compliance Training</div>
+                        <div class="task-status status-in-progress">In Progress</div>
+                    </div>
+                    <div class="task-description">
+                        Complete the online compliance training modules covering data security, workplace safety, and ethics.
+                    </div>
+                    <div class="task-meta">
+                        <div class="task-deadline">Due: Dec 30, 2024</div>
+                        <div class="task-priority priority-medium">Medium Priority</div>
+                    </div>
+                </div>
+
+                <div class="task-item">
+                    <div class="task-header">
+                        <div class="task-title">Update Emergency Contact Information</div>
+                        <div class="task-status status-completed">Completed</div>
+                    </div>
+                    <div class="task-description">
+                        Review and update your emergency contact details in the HR system to ensure accuracy.
+                    </div>
+                    <div class="task-meta">
+                        <div class="task-deadline">Completed: Dec 12, 2024</div>
+                        <div class="task-priority priority-low">Low Priority</div>
+                    </div>
+                </div>
+
+                <div class="task-item">
+                    <div class="task-header">
+                        <div class="task-title">Submit Travel Expense Reports</div>
+                        <div class="task-status status-overdue">Overdue</div>
+                    </div>
+                    <div class="task-description">
+                        Submit expense reports for business travel from November with receipts and documentation.
+                    </div>
+                    <div class="task-meta">
+                        <div class="task-deadline">Due: Dec 10, 2024</div>
+                        <div class="task-priority priority-high">High Priority</div>
+                    </div>
+                </div>
+
+                <div class="task-item">
+                    <div class="task-header">
+                        <div class="task-title">Complete Team Building Survey</div>
+                        <div class="task-status status-completed">Completed</div>
+                    </div>
+                    <div class="task-description">
+                        Provide feedback on team dynamics and suggestions for improving collaboration and communication.
+                    </div>
+                    <div class="task-meta">
+                        <div class="task-deadline">Completed: Dec 8, 2024</div>
+                        <div class="task-priority priority-low">Low Priority</div>
+                    </div>
+                </div>
+
+                <div class="task-item">
+                    <div class="task-header">
+                        <div class="task-title">Schedule Annual Health Checkup</div>
+                        <div class="task-status status-pending">Pending</div>
+                    </div>
+                    <div class="task-description">
+                        Book your annual health checkup with approved healthcare providers as part of company wellness program.
+                    </div>
+                    <div class="task-meta">
+                        <div class="task-deadline">Due: Jan 15, 2025</div>
+                        <div class="task-priority priority-medium">Medium Priority</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Performance Chart
+        const ctx = document.getElementById('performanceChart').getContext('2d');
+        const performanceChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                datasets: [{
+                    label: 'Performance Score',
+                    data: [78, 82, 85, 88, 84, 89, 91, 87, 85, 88, 92, 85],
+                    borderColor: '#4f46e5',
+                    backgroundColor: 'rgba(79, 70, 229, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4,
+                    pointBackgroundColor: '#4f46e5',
+                    pointBorderColor: '#ffffff',
+                    pointBorderWidth: 2,
+                    pointRadius: 6,
+                    pointHoverRadius: 8
+                }, {
+                    label: 'Team Average',
+                    data: [75, 77, 79, 81, 80, 82, 84, 83, 82, 84, 86, 83],
+                    borderColor: '#10b981',
+                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                    borderWidth: 2,
+                    fill: false,
+                    tension: 0.4,
+                    pointBackgroundColor: '#10b981',
+                    pointBorderColor: '#ffffff',
+                    pointBorderWidth: 2,
+                    pointRadius: 4,
+                    pointHoverRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            padding: 20,
+                            usePointStyle: true,
+                            font: {
+                                size: 12
+                            }
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                        titleColor: '#ffffff',
+                        bodyColor: '#ffffff',
+                        cornerRadius: 8,
+                        padding: 12
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        min: 70,
+                        max: 100,
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.1)'
+                        },
+                        ticks: {
+                            callback: function(value) {
+                                return value + '%';
+                            }
+                        }
+                    },
+                    x: {
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.1)'
+                        }
+                    }
+                },
+                interaction: {
+                    intersect: false,
+                    mode: 'index'
+                }
+            }
+        });
+
+        // Update stats dynamically
+        function updateStats() {
+            const tasks = document.querySelectorAll('.task-item');
+            let completed = 0, pending = 0, inProgress = 0, overdue = 0;
+
+            tasks.forEach(task => {
+                const status = task.querySelector('.task-status');
+                if (status.classList.contains('status-completed')) completed++;
+                else if (status.classList.contains('status-pending')) pending++;
+                else if (status.classList.contains('status-in-progress')) inProgress++;
+                else if (status.classList.contains('status-overdue')) overdue++;
+            });
+
+            document.getElementById('total-tasks').textContent = tasks.length;
+            document.getElementById('completed-tasks').textContent = completed;
+            document.getElementById('pending-tasks').textContent = pending + inProgress;
+            document.getElementById('overdue-tasks').textContent = overdue;
+        }
+
+        // Initialize stats
+        updateStats();
+
+        // Smooth scrolling for any hash links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
