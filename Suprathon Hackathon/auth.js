@@ -142,6 +142,65 @@ app.post("/login.html", (req, res) => {
   });
 });
 
+app.post("/hr-login.html", (req, res) => {
+  const { username, password } = req.body;
+
+  if (!username || !password) {
+    return res.status(400).send("All fields are required.");
+  }
+
+  const sql = "SELECT * FROM auth WHERE username = ?";
+  con.query(sql, [username], (err, results) => {
+    if (err) {
+      console.error("Database error:", err);
+      return res.status(500).send("Database error");
+    }
+
+    if (results.length === 0) {
+      return res.status(401).send("User not found");
+    }
+
+    const user = results[0];
+
+    // Compare password
+    bcrypt.compare(password, user.password, (err, isMatch) => {
+      if (err) {
+        console.error("Password comparison error:", err);
+        return res.status(500).send("Error checking password");
+      }
+
+      if (!isMatch) {
+        return res.status(401).send("Invalid password");
+      }
+
+      // Generate OTP and send email
+      const otp = generateOTP();
+      otpStore[username] = otp;
+
+      console.log(`OTP for ${username} is ${otp} and ${otpStore[username]}`);
+
+      const mailOptions = {
+        from: process.env.EMAIL_USER || "cexynos1234@gmail.com",
+        to: user.username,
+        subject: "Login OTP",
+        text: `Your login OTP is: ${otp}`,
+        html: `<p>Your login OTP is: <strong>${otp}</strong></p>`,
+      };
+
+      transporter.sendMail(mailOptions, (err, info) => {
+        if (err) {
+          console.error("Failed to send OTP:", err);
+          return res
+            .status(500)
+            .json({ success: false, message: "Failed to send OTP." });
+        }
+        res.redirect("/verify-otp.html");
+      });
+    });
+  });
+});
+
+
 // Verify OTP
 // Verify OTP
 app.post("/verify-otp.html", (req, res) => {
