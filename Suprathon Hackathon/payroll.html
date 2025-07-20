@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payroll & Compensation - HR Management</title>
+    <link rel="stylesheet" href="employee_home.css">
+    <style>
+        .payroll-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .payroll-header {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 18px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 6px 24px rgba(44, 62, 80, 0.10);
+            text-align: center;
+        }
+
+        .payroll-title {
+            font-size: 2.5rem;
+            color: #4f46e5;
+            margin-bottom: 1rem;
+        }
+
+        .payroll-subtitle {
+            color: #6b7a90;
+            font-size: 1.1rem;
+        }
+
+        .payroll-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .payroll-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 18px;
+            padding: 2rem;
+            box-shadow: 0 6px 24px rgba(44, 62, 80, 0.10);
+            border: 1.5px solid #e0e7ff;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            color: #4f46e5;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+        }
+
+        .salary-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .info-item {
+            padding: 1rem;
+            background: #f8fafc;
+            border-radius: 8px;
+            border-left: 4px solid #4f46e5;
+        }
+
+        .info-label {
+            font-size: 0.9rem;
+            color: #6b7a90;
+            margin-bottom: 0.5rem;
+        }
+
+        .info-value {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #2d3e50;
+        }
+
+        .payroll-actions {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            background: #4f46e5;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 0.8rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.2s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .action-btn:hover {
+            background: #a5b4fc;
+            color: #2d3e50;
+            transform: translateY(-2px);
+        }
+
+        .action-btn.secondary {
+            background: #6b7a90;
+        }
+
+        .action-btn.secondary:hover {
+            background: #a0aec0;
+        }
+
+        .payroll-history {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 18px;
+            padding: 2rem;
+            box-shadow: 0 6px 24px rgba(44, 62, 80, 0.10);
+        }
+
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .history-table th,
+        .history-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .history-table th {
+            background: #f8fafc;
+            font-weight: 600;
+            color: #4f46e5;
+        }
+
+        .history-table tr:hover {
+            background: #f8fafc;
+        }
+
+        .email-form {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 18px;
+            padding: 2rem;
+            box-shadow: 0 6px 24px rgba(44, 62, 80, 0.10);
+            margin-top: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #2d3e50;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #a5b4fc;
+            border-radius: 8px;
+            font-size: 1rem;
+            background: #f4f6fb;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        .success-message {
+            background: #d1fae5;
+            color: #065f46;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            display: none;
+        }
+
+        .error-message {
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .payroll-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .salary-info {
+                grid-template-columns: 1fr;
+            }
+            
+            .payroll-actions {
+                flex-direction: column;
+            }
+            
+            .action-btn {
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="payroll-container">
+        <!-- Back to Employee Home Button -->
+        <a href="employee_home.html" class="action-btn secondary" style="margin-bottom: 2rem; display: inline-block;">&larr; Back to Employee Home</a>
+        <!-- Header -->
+        <div class="payroll-header">
+            <h1 class="payroll-title">Payroll & Compensation</h1>
+            <p class="payroll-subtitle">Manage your salary, benefits, and payroll information</p>
+        </div>
+
+        <!-- Main Payroll Information -->
+        <div class="payroll-grid">
+            <!-- Current Payroll -->
+            <div class="payroll-card">
+                <h2 class="card-title">Current Payroll</h2>
+                <div class="salary-info">
+                    <div class="info-item">
+                        <div class="info-label">Basic Salary</div>
+                        <div class="info-value">₹45,000</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">HRA</div>
+                        <div class="info-value">₹18,000</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">DA</div>
+                        <div class="info-value">₹9,000</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Special Allowance</div>
+                        <div class="info-value">₹8,000</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Gross Salary</div>
+                        <div class="info-value">₹80,000</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Net Salary</div>
+                        <div class="info-value">₹65,000</div>
+                    </div>
+                </div>
+                <div class="payroll-actions">
+                    <button class="action-btn" onclick="sendPayrollSlip()">Send Payroll Slip</button>
+                    <button class="action-btn secondary" onclick="downloadPayroll()">Download PDF</button>
+                </div>
+            </div>
+
+            <!-- Benefits & Compensation -->
+            <div class="payroll-card">
+                <h2 class="card-title">Benefits & Compensation</h2>
+                <div class="salary-info">
+                    <div class="info-item">
+                        <div class="info-label">Health Insurance</div>
+                        <div class="info-value">₹5,000/month</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Provident Fund</div>
+                        <div class="info-value">₹7,200</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Performance Bonus</div>
+                        <div class="info-value">₹15,000</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Transport Allowance</div>
+                        <div class="info-value">₹1,600</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Meal Allowance</div>
+                        <div class="info-value">₹2,200</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Total Benefits</div>
+                        <div class="info-value">₹31,000</div>
+                    </div>
+                </div>
+                <div class="payroll-actions">
+                    <button class="action-btn" onclick="sendBenefitsReport()">Send Benefits Report</button>
+                    <button class="action-btn secondary" onclick="viewBenefits()">View Details</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Email Configuration -->
+        <div class="email-form">
+            <h2 class="card-title">Email Configuration</h2>
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" value="employee@company.com" placeholder="Enter your email address">
+            </div>
+            <div class="form-group">
+                <label for="payrollMonth">Payroll Month</label>
+                <select id="payrollMonth">
+                    <option value="current">Current Month</option>
+                    <option value="previous">Previous Month</option>
+                    <option value="specific">Specific Month</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="documentType">Document Type</label>
+                <select id="documentType">
+                    <option value="payslip">Payroll Slip</option>
+                    <option value="benefits">Benefits Report</option>
+                    <option value="tax">Tax Statement</option>
+                    <option value="all">All Documents</option>
+                </select>
+            </div>
+            <button class="action-btn" onclick="sendToEmail()">Send to Email</button>
+            
+            <div id="successMessage" class="success-message">
+                ✅ Payroll slip has been sent successfully to your email!
+            </div>
+            <div id="errorMessage" class="error-message">
+                ❌ Failed to send email. Please try again.
+            </div>
+        </div>
+
+        <div style="height: 2rem;"></div>
+
+        <!-- Payroll History -->
+        <div class="payroll-history">
+            <h2 class="card-title">Payroll History</h2>
+            <table class="history-table">
+                <thead>
+                    <tr>
+                        <th>Month</th>
+                        <th>Gross Salary</th>
+                        <th>Net Salary</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>December 2024</td>
+                        <td>₹80,000</td>
+                        <td>₹65,000</td>
+                        <td>✅ Paid</td>
+                        <td>
+                            <button class="action-btn" onclick="sendHistoricalSlip('December 2024')">Send</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>November 2024</td>
+                        <td>₹80,000</td>
+                        <td>₹65,000</td>
+                        <td>✅ Paid</td>
+                        <td>
+                            <button class="action-btn" onclick="sendHistoricalSlip('November 2024')">Send</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>October 2024</td>
+                        <td>₹80,000</td>
+                        <td>₹65,000</td>
+                        <td>✅ Paid</td>
+                        <td>
+                            <button class="action-btn" onclick="sendHistoricalSlip('October 2024')">Send</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Get user email from login session (you can modify this based on your authentication system)
+        function getUserEmail() {
+            // This should be replaced with actual user email from your authentication system
+            return document.getElementById('email').value;
+        }
+
+        // Send payroll slip to email
+        function sendPayrollSlip() {
+            const email = getUserEmail();
+            const month = document.getElementById('payrollMonth').value;
+            
+            // Simulate sending email
+            showSuccessMessage('Payroll slip for ' + month + ' has been sent to ' + email);
+            
+            // In a real application, you would make an API call here:
+            // fetch('/api/send-payroll-slip', {
+            //     method: 'POST',
+            //     headers: { 'Content-Type': 'application/json' },
+            //     body: JSON.stringify({ email, month })
+            // });
+        }
+
+        // Send benefits report
+        function sendBenefitsReport() {
+            const email = getUserEmail();
+            showSuccessMessage('Benefits report has been sent to ' + email);
+        }
+
+        // Download payroll PDF
+        function downloadPayroll() {
+            // Simulate PDF download
+            const link = document.createElement('a');
+            link.href = '#';
+            link.download = 'payroll-slip.pdf';
+            link.click();
+            showSuccessMessage('Payroll PDF downloaded successfully');
+        }
+
+        // View benefits details
+        function viewBenefits() {
+            showSuccessMessage('Benefits details opened in new window');
+        }
+
+        // Send to email with custom configuration
+        function sendToEmail() {
+            const email = document.getElementById('email').value;
+            const month = document.getElementById('payrollMonth').value;
+            const documentType = document.getElementById('documentType').value;
+            
+            if (!email) {
+                showErrorMessage('Please enter a valid email address');
+                return;
+            }
+            
+            showSuccessMessage(documentType + ' for ' + month + ' has been sent to ' + email);
+        }
+
+        // Send historical payroll slip
+        function sendHistoricalSlip(month) {
+            const email = getUserEmail();
+            showSuccessMessage('Payroll slip for ' + month + ' has been sent to ' + email);
+        }
+
+        // Show success message
+        function showSuccessMessage(message) {
+            const successDiv = document.getElementById('successMessage');
+            successDiv.textContent = '✅ ' + message;
+            successDiv.style.display = 'block';
+            
+            // Hide error message if visible
+            document.getElementById('errorMessage').style.display = 'none';
+            
+            // Auto-hide after 5 seconds
+            setTimeout(() => {
+                successDiv.style.display = 'none';
+            }, 5000);
+        }
+
+        // Show error message
+        function showErrorMessage(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.textContent = '❌ ' + message;
+            errorDiv.style.display = 'block';
+            
+            // Hide success message if visible
+            document.getElementById('successMessage').style.display = 'none';
+            
+            // Auto-hide after 5 seconds
+            setTimeout(() => {
+                errorDiv.style.display = 'none';
+            }, 5000);
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set current date
+            const currentDate = new Date();
+            const currentMonth = currentDate.toLocaleString('default', { month: 'long' });
+            const currentYear = currentDate.getFullYear();
+            
+            // Update email field with user's email (replace with actual user data)
+            // document.getElementById('email').value = getUserEmailFromSession();
+        });
+    </script>
+</body>
+</html> 
